@@ -4,13 +4,13 @@ import GlobalHeader from './GlobalHeader.astro';
 ---
 
 <section id="hero" class="relative isolate min-h-screen bg-white dark:bg-gray-900">
-  <!-- Keep header above background -->
-  <div class="relative z-20">
+  <!-- Overlay header so it doesn't consume layout height -->
+  <div class="absolute inset-x-0 top-0 z-20">
     <GlobalHeader />
   </div>
 
-  <!-- Background: video + gradient (behind content) -->
-  <div class="absolute inset-0 -z-10 parallax-container pointer-events-none">
+  <!-- Background video stays behind -->
+  <div class="absolute inset-0 -z-10 pointer-events-none">
     <video
       id="hero-video"
       class="w-full h-full object-cover"
@@ -52,10 +52,11 @@ import GlobalHeader from './GlobalHeader.astro';
         </div>
       </div>
 
-      <div class="text-center">
-        <h1 class="text-5xl font-semibold tracking-tight text-balance text-white sm:text-7xl">
-          Data to enrich your online business
-        </h1>
+  <!-- Hero content: fill height and center -->
+  <div class="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="flex min-h-screen items-center justify-center">
+      <div class="max-w-2xl text-center">
+        <h1 class="text-5xl sm:text-7xl font-semibold text-white">Data to enrich your online business</h1>
         <p class="mt-8 text-lg font-medium text-pretty text-gray-200 sm:text-xl/8">
           Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo.
         </p>
