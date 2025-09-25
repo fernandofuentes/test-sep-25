@@ -67,6 +67,26 @@ import GlobalHeader from './GlobalHeader.astro';
         </div>
       </div>
     </div>
+
+    <!-- Animated scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+      <div class="flex flex-col items-center animate-bounce">
+        <span class="text-white/80 text-sm font-medium mb-2">Scroll</span>
+        <svg 
+          class="w-6 h-6 text-white/80" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2" 
+            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+          />
+        </svg>
+      </div>
+    </div>
   </div>
 
   <!-- Bottom decorative blob -->
