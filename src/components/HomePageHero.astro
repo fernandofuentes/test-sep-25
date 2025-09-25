@@ -65,45 +65,42 @@
   </header>
 
   <div class="relative isolate overflow-hidden pt-14">
-    <!-- Video Background Container -->
-    <div class="absolute inset-0 -z-10">
-      <!-- Primary Video -->
-      <video 
-        id="hero-video"
-        autoplay 
-        muted 
-        loop 
-        playsinline
-        class="w-full h-full object-cover"
-        style="min-height: 100vh;"
-      >
-        <source src="https://videos.pexels.com/video-files/3129671/3129671-uhd_2560_1440_30fps.mp4" type="video/mp4">
-        <source src="https://videos.pexels.com/video-files/2278095/2278095-uhd_2560_1440_30fps.mp4" type="video/mp4">
-      </video>
-      
-      <!-- Fallback animated gradient if video fails -->
-      <div id="gradient-fallback" class="w-full h-full bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 animate-pulse" style="display: none;"></div>
-    </div>
+    <!-- Video background -->
+    <video 
+      autoplay 
+      muted 
+      loop 
+      playsinline
+      preload="auto"
+      onloadstart="console.log('Video loading started')"
+      oncanplay="console.log('Video can start playing')"
+      onerror="console.error('Video failed to load'); this.style.display='none'"
+      class="absolute inset-0 -z-10 size-full object-cover"
+    >
+      <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4">
+      <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+      <!-- Fallback image if video fails to load -->
+      <div class="absolute inset-0 -z-10 size-full bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900"></div>
+    </video>
     
-    <!-- Dark overlay for text readability -->
-    <div class="absolute inset-0 -z-10 bg-black/50"></div>
-    
+    <!-- Dark overlay for better text readability -->
+    <div class="absolute inset-0 -z-10 bg-black/40 dark:bg-black/60"></div>
     <div aria-hidden="true" class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
       <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-[calc(50%-11rem)] aspect-1155/678 w-144.5 -translate-x-1/2 rotate-30 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-288.75"></div>
     </div>
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
         <div class="hidden sm:mb-8 sm:flex sm:justify-center">
-          <div class="relative rounded-full px-3 py-1 text-sm/6 text-gray-300 ring-1 ring-white/20 hover:ring-white/30 backdrop-blur-sm bg-white/10">
-            Announcing our next round of funding. <a href="#" class="font-semibold text-indigo-300"><span aria-hidden="true" class="absolute inset-0"></span>Read more <span aria-hidden="true">&rarr;</span></a>
+          <div class="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20 dark:text-gray-400 dark:ring-white/10 dark:hover:ring-white/20">
+            Announcing our next round of funding. <a href="#" class="font-semibold text-indigo-600 dark:text-indigo-400"><span aria-hidden="true" class="absolute inset-0"></span>Read more <span aria-hidden="true">&rarr;</span></a>
           </div>
         </div>
         <div class="text-center">
-          <h1 class="text-5xl font-semibold tracking-tight text-balance text-white sm:text-7xl">Data to enrich your online business</h1>
-          <p class="mt-8 text-lg font-medium text-pretty text-gray-200 sm:text-xl/8">Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat.</p>
+          <h1 class="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl dark:text-white">Data to enrich your online business</h1>
+          <p class="mt-8 text-lg font-medium text-pretty text-gray-600 sm:text-xl/8 dark:text-gray-400">Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat.</p>
           <div class="mt-10 flex items-center justify-center gap-x-6">
-            <a href="#" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Get started</a>
-            <a href="#" class="text-sm/6 font-semibold text-white">Learn more <span aria-hidden="true">→</span></a>
+            <a href="#" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400 dark:focus-visible:outline-indigo-500">Get started</a>
+            <a href="#" class="text-sm/6 font-semibold text-gray-900 dark:text-white">Learn more <span aria-hidden="true">→</span></a>
           </div>
         </div>
       </div>
@@ -115,95 +112,36 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const video = document.getElementById('hero-video');
-  const fallback = document.getElementById('gradient-fallback');
-  
-  console.log('🎬 Video background initialization started');
-  
-  if (!video) {
-    console.error('❌ Video element not found');
-    showFallback();
-    return;
-  }
-  
-  // Show fallback immediately if video doesn't start loading within 3 seconds
-  const loadTimeout = setTimeout(() => {
-    console.warn('⏰ Video loading timeout - showing fallback');
-    showFallback();
-  }, 3000);
-  
-  // Video event listeners
-  video.addEventListener('loadstart', () => {
-    console.log('📥 Video loading started');
-  });
-  
-  video.addEventListener('canplay', () => {
-    console.log('✅ Video can play');
-    clearTimeout(loadTimeout);
-  });
-  
-  video.addEventListener('loadeddata', () => {
-    console.log('✅ Video data loaded');
-    console.log(`📐 Video dimensions: ${video.videoWidth}x${video.videoHeight}`);
-    console.log(`⏱️ Video duration: ${video.duration}s`);
-    clearTimeout(loadTimeout);
-  });
-  
-  video.addEventListener('playing', () => {
-    console.log('▶️ Video is playing');
-    hideFallback();
-  });
-  
-  video.addEventListener('error', (e) => {
-    console.error('❌ Video error:', e);
-    console.error('Error details:', video.error);
-    clearTimeout(loadTimeout);
-    showFallback();
-  });
-  
-  // Force play attempt
-  video.play().then(() => {
-    console.log('✅ Video play() succeeded');
-  }).catch(error => {
-    console.error('❌ Video play() failed:', error);
-    showFallback();
-  });
-  
-  function showFallback() {
-    if (fallback) {
-      fallback.style.display = 'block';
-      console.log('🎨 Showing gradient fallback');
+  // Video background diagnostics
+  document.addEventListener('DOMContentLoaded', function() {
+    const video = document.querySelector('video');
+    if (video) {
+      console.log('Video element found:', video);
+      console.log('Video sources:', Array.from(video.querySelectorAll('source')).map(s => s.src));
+      
+      // Check if video can play
+      video.addEventListener('loadeddata', () => {
+        console.log('✅ Video loaded successfully');
+        console.log('Video duration:', video.duration);
+        console.log('Video dimensions:', video.videoWidth, 'x', video.videoHeight);
+      });
+      
+      video.addEventListener('error', (e) => {
+        console.error('❌ Video error:', e);
+        console.log('Falling back to gradient background');
+      });
+      
+      // Force play attempt
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          console.log('✅ Video playing successfully');
+        }).catch(error => {
+          console.error('❌ Video play failed:', error);
+        });
+      }
+    } else {
+      console.error('❌ Video element not found');
     }
-  }
-  
-  function hideFallback() {
-    if (fallback) {
-      fallback.style.display = 'none';
-    }
-  }
-});
+  });
 </script>
-
-<style>
-  /* Ensure video covers full area */
-  #hero-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    min-height: 100vh;
-  }
-  
-  /* Animated gradient fallback */
-  @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  
-  #gradient-fallback {
-    background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
-  }
-</style>
