@@ -2,8 +2,13 @@
 @import "tailwindcss";
 
 @theme {
+  /* === Brand Colors === */
   --color-brand-emerald:   #1B998B;
   --color-brand-black:     #000000;
   --color-brand-white:     #FFFFFF;
   --color-brand-lightgray: #F5F5F5;
+
+  /* === Brand Fonts === */
+  --font-brand: "Veneer", "Poppins", sans-serif;
+  --font-sans: "Poppins", system-ui, sans-serif; /* fallback for body text */
 }
