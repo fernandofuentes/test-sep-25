@@ -5,26 +5,27 @@ import GlobalHeader from './GlobalHeader.astro';
 
 <div class="bg-white dark:bg-gray-900">
  <GlobalHeader />
-  <div class="relative isolate overflow-hidden pt-14">
-    <!-- Video Background Container -->
-    <div class="absolute inset-0 -z-10">
-      <!-- Primary Video -->
-      <video 
-        id="hero-video"
-        autoplay 
-        muted 
-        loop 
-        playsinline
-        preload="auto"
-        class="w-full h-full object-cover"
-        style="min-height: 100vh;"
-      >
-        <source src="/videos/beach.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-      
-      <!-- Fallback animated gradient if video fails -->
-      <div id="gradient-fallback" class="w-full h-full bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 animate-pulse" style="display: none;"></div>
+     <div class="absolute inset-0 z-0 parallax-container">
+<video
+  autoplay
+  muted
+  loop
+  playsinline
+  class="w-full h-full object-cover"
+  poster="/images/christian-fuentes-hero-image.jpg"
+  aria-hidden="true"
+>
+  <source src="/videos/beach.webm" type="video/webm">
+  <source src="/videos/beach.mp4" type="video/mp4">
+  <!-- Fallback image if video doesn't load -->
+  <img
+    src="/images/christian-fuentes-hero-image.jpg"
+    alt="Unwritten Agency"
+    class="w-full h-full object-cover"
+  >
+</video>
+
+        <div class="absolute inset-0 bg-gradient-to-b from-navy-dark/70 via-navy-dark/70 to-navy-dark/70"></div>
     </div>
     
     <!-- Dark overlay for text readability -->
