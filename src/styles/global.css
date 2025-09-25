@@ -1,5 +1,9 @@
+/* src/styles/global.css */
 @import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+  --color-brand-emerald:   #1B998B;
+  --color-brand-black:     #000000;
+  --color-brand-white:     #FFFFFF;
+  --color-brand-lightgray: #F5F5F5;
+}
