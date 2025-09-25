@@ -1,6 +1,8 @@
 ---
 import '@tailwindplus/elements';
 import "../styles/global.css";
+import GlobalCTA from '../components/GlobalCTA.astro'
+import GlobalFooter from '../components/GlobalFooter.astro'
 ---
 <!doctype html>
 <html lang="en">
@@ -13,6 +15,8 @@ import "../styles/global.css";
 	</head>
 	<body>
 		<slot />
+    <GlobalCTA />
+    <GlobalFooter />
 	</body>
 </html>
 
