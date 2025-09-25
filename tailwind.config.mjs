@@ -1,10 +1,9 @@
-// tailwind.config.ts
-import type { Config } from "tailwindcss";
-
-const config: Config = {
+// tailwind.config.mjs
+/** @type {import('tailwindcss').Config} */
+export default {
   content: [
     "./index.html",
-    "./src/**/*.{astro,html,js,jsx,ts,tsx,vue,svelte}", // 👈 important: scans all your files
+    "./src/**/*.{astro,html,js,jsx,ts,tsx,vue,svelte}",
   ],
   theme: {
     extend: {
@@ -20,5 +19,3 @@ const config: Config = {
   },
   plugins: [],
 };
-
-export default config;
