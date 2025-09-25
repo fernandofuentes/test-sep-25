@@ -15,10 +15,12 @@ import GlobalHeader from './GlobalHeader.astro';
         muted 
         loop 
         playsinline
+        preload="auto"
         class="w-full h-full object-cover"
         style="min-height: 100vh;"
       >
-        <source src="/videos/beach.mp4" type="video/mp4">
+        <source src="/videos/beach.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
       </video>
       
       <!-- Fallback animated gradient if video fails -->
