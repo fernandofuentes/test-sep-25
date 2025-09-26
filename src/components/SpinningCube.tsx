@@ -1,5 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
+import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js';
+import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 
 const SpinningCube: React.FC = () => {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -29,7 +32,7 @@ const SpinningCube: React.FC = () => {
       0.1,
       2000
     );
-    camera.position.z = 6; // zoom out so cube isn't cropped
+    camera.position.z = 8;
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -38,14 +41,20 @@ const SpinningCube: React.FC = () => {
     rendererRef.current = renderer;
     mountRef.current.appendChild(renderer.domElement);
 
-    // Cube edges (only outlines, no diagonals)
-    const geometry = new THREE.BoxGeometry(4, 4, 4); // bigger cube
-    const edges = new THREE.EdgesGeometry(geometry); // only edges
-    const material = new THREE.LineBasicMaterial({
-      color: 0x1B998B, // brand emerald
-      linewidth: 1,    // not always respected in Chrome
+    // Cube edges geometry
+    const geometry = new THREE.BoxGeometry(5, 5, 5); // cube size
+    const edges = new THREE.EdgesGeometry(geometry);
+
+    // Convert edges to LineSegments2
+    const lineGeometry = new LineSegmentsGeometry().fromEdgesGeometry(edges);
+    const lineMaterial = new LineMaterial({
+      color: 0x1B998B, // emerald green
+      linewidth: 0.008, // relative to screen size! (experiment: 0.005–0.02)
+      dashed: false,
     });
-    const cube = new THREE.LineSegments(edges, material);
+    lineMaterial.resolution.set(window.innerWidth, window.innerHeight);
+
+    const cube = new LineSegments2(lineGeometry, lineMaterial);
     scene.add(cube);
 
     // Animate
@@ -57,12 +66,13 @@ const SpinningCube: React.FC = () => {
     };
     animate();
 
-    // Resize
+    // Handle resize
     const handleResize = () => {
       if (!mountRef.current || !rendererRef.current) return;
       camera.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
       camera.updateProjectionMatrix();
       rendererRef.current.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
+      lineMaterial.resolution.set(window.innerWidth, window.innerHeight);
     };
     window.addEventListener('resize', handleResize);
 
@@ -74,13 +84,14 @@ const SpinningCube: React.FC = () => {
         rendererRef.current.dispose();
       }
       geometry.dispose();
-      material.dispose();
+      edges.dispose();
+      lineGeometry.dispose();
+      lineMaterial.dispose();
     };
   }, []);
 
   return (
     <div className="relative w-full h-[600px] bg-white overflow-visible">
-      {/* overflow-visible lets cube extend beyond */}
       <div ref={mountRef} className="w-full h-full" />
       <div className="absolute bottom-4 right-4 text-xs text-gray-500 font-mono">
         WebGL_STATUS: {webglStatus}
