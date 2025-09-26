@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 
 const HomePageCyberComputer: React.FC = () => {
@@ -6,6 +7,7 @@ const HomePageCyberComputer: React.FC = () => {
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const frameRef = useRef<number>();
+  const [webglStatus, setWebglStatus] = useState('LOADING');
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -13,8 +15,11 @@ const HomePageCyberComputer: React.FC = () => {
     // Check WebGL support
     if (!window.WebGLRenderingContext) {
       console.error('WebGL not supported');
+      setWebglStatus('ERROR');
       return;
     }
+    
+    setWebglStatus('ACTIVE');
 
     // Scene setup
     const scene = new THREE.Scene();
@@ -211,7 +216,7 @@ const HomePageCyberComputer: React.FC = () => {
           <div className="text-xs text-gray-400 mt-1">CYBER_COMPUTER_V2.1</div>
         </div>
         <div className="absolute bottom-4 right-4 text-xs text-gray-500 font-mono">
-          <div>WebGL_STATUS: {typeof window !== 'undefined' && window.WebGLRenderingContext ? 'ACTIVE' : 'ERROR'}</div>
+          <div>WebGL_STATUS: {webglStatus}</div>
         </div>
       </div>
     </div>
