@@ -8,7 +8,7 @@ import SpinningCube from "../components/SpinningCube.tsx";
     <div class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
 
       <!-- Copy -->
-      <div class="lg:pt-4 lg:pr-8">
+<div class="lg:pt-4 lg:pr-8 order-2 lg:order-1">
         <header class="lg:max-w-lg">
           <p class="text-sm font-semibold text-brand-emerald">About Unwritten Agency</p>
           <h2 id="about-heading" class="mt-2 text-4xl sm:text-5xl font-semibold tracking-tight text-gray-900 text-balance">
@@ -23,7 +23,9 @@ import SpinningCube from "../components/SpinningCube.tsx";
       </div>
 
       <!-- 3D Cube -->
+      <div class="order-1 lg:order-2">
 <SpinningCube client:visible />
+</div>
     </div>
   </div>
 </section>
