@@ -39,52 +39,57 @@ const SpinningCube: React.FC = () => {
     rendererRef.current = renderer;
     mountRef.current.appendChild(renderer.domElement);
 
-    // === Emerald wireframe cube (outer edges only, thick lines) ===
+    // === Emerald wireframe cube (thick edges) ===
     const boxGeom = new THREE.BoxGeometry(5, 5, 5);
     const edges = new THREE.EdgesGeometry(boxGeom);
     const lineGeom = new LineSegmentsGeometry().fromEdgesGeometry(edges);
 
     const lineMat = new LineMaterial({
-      color: 0x1B998B,
-      linewidth: 8, // make it chunky
+      color: 0x1B998B,   // Unwritten emerald
+      linewidth: 7,      // thickness in screen pixels
     });
-    // Must match CANVAS size (not window) or it won't show
+    // Important: resolution must match canvas size
     lineMat.resolution.set(mountRef.current.clientWidth, mountRef.current.clientHeight);
-    // Keep lines from occluding the black cube
+    // Prevent wireframe from occluding shaded cube
     lineMat.depthWrite = false;
 
     const wireCube = new LineSegments2(lineGeom, lineMat);
     wireCube.renderOrder = 0;
     scene.add(wireCube);
 
-    // === Orbiting black cube ===
-    // DEBUG: set to true to center the black cube (no orbit) to prove visibility
-    const DEBUG_CENTER_BLACK = false;
+    // === Lighting for shaded cube ===
+    const ambient = new THREE.AmbientLight(0xffffff, 0.45);
+    scene.add(ambient);
 
+    const key = new THREE.DirectionalLight(0xffffff, 0.9);
+    key.position.set(6, 8, 10);
+    scene.add(key);
+
+    const rim = new THREE.DirectionalLight(0xffffff, 0.4);
+    rim.position.set(-6, -4, -8);
+    scene.add(rim);
+
+    // === Orbiting black cube (shaded so faces read) ===
     const pivot = new THREE.Object3D();
     scene.add(pivot);
 
-    const orbitSize = 2.0;      // BIG so you can't miss it
-    const orbitRadius = 2.2;    // close to the center
+    const orbitSize = 1.4;
+    const orbitRadius = 2.6;
     const orbitGeom = new THREE.BoxGeometry(orbitSize, orbitSize, orbitSize);
-    const orbitMat = new THREE.MeshBasicMaterial({
-      color: 0x000000,   // pure black
+    const orbitMat = new THREE.MeshStandardMaterial({
+      color: 0x000000,      // black
+      roughness: 0.35,      // a touch of sheen
+      metalness: 0.0,       // non-metal look; raise to ~0.3 for glossier
+      // optional: subtle emissive to avoid total black crush
+      emissive: 0x0a0a0a,
+      emissiveIntensity: 0.3,
     });
-    // Make 100% sure it draws over the wireframe
-    orbitMat.depthTest = false;
-
     const orbitCube = new THREE.Mesh(orbitGeom, orbitMat);
-    orbitCube.renderOrder = 2; // draw after wireframe
-    orbitCube.frustumCulled = false;
+    orbitCube.renderOrder = 2;       // draw after wireframe
+    orbitCube.castShadow = false;
+    orbitCube.receiveShadow = false;
     pivot.add(orbitCube);
-
-    if (DEBUG_CENTER_BLACK) {
-      // Park it right in the middle to confirm you can see it
-      orbitCube.position.set(0, 0, 0);
-    } else {
-      // Normal orbit start position
-      orbitCube.position.set(orbitRadius, 0, 0);
-    }
+    orbitCube.position.set(orbitRadius, 0, 0);
 
     // Animate
     const animate = () => {
@@ -93,13 +98,11 @@ const SpinningCube: React.FC = () => {
       wireCube.rotation.x += 0.01;
       wireCube.rotation.y += 0.01;
 
-      if (!DEBUG_CENTER_BLACK) {
-        const t = performance.now() * 0.001;
-        pivot.rotation.y += 0.02;                 // horizontal orbit
-        pivot.rotation.x = Math.sin(t * 0.8) * 0.15;
-        orbitCube.rotation.x += 0.03;
-        orbitCube.rotation.y += 0.03;
-      }
+      const t = performance.now() * 0.001;
+      pivot.rotation.y += 0.02;                 // horizontal orbit
+      pivot.rotation.x = Math.sin(t * 0.8) * 0.15; // gentle vertical wobble
+      orbitCube.rotation.x += 0.03;
+      orbitCube.rotation.y += 0.03;
 
       renderer.render(scene, camera);
     };
@@ -113,7 +116,7 @@ const SpinningCube: React.FC = () => {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       rendererRef.current.setSize(w, h);
-      lineMat.resolution.set(w, h); // keep line thickness correct
+      lineMat.resolution.set(w, h); // keep line thickness consistent
     };
     window.addEventListener('resize', handleResize);
 
