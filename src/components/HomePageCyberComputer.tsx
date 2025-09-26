@@ -19,11 +19,10 @@ const SpinningCube: React.FC = () => {
     }
     setWebglStatus('ACTIVE');
 
-    // Scene
+    // Scene & camera
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
 
-    // Camera
     const camera = new THREE.PerspectiveCamera(
       60,
       mountRef.current.clientWidth / mountRef.current.clientHeight,
@@ -40,50 +39,52 @@ const SpinningCube: React.FC = () => {
     rendererRef.current = renderer;
     mountRef.current.appendChild(renderer.domElement);
 
-    // === Emerald wireframe cube (thick edges) ===
+    // === Emerald wireframe cube (outer edges only, thick lines) ===
     const boxGeom = new THREE.BoxGeometry(5, 5, 5);
     const edges = new THREE.EdgesGeometry(boxGeom);
     const lineGeom = new LineSegmentsGeometry().fromEdgesGeometry(edges);
 
     const lineMat = new LineMaterial({
       color: 0x1B998B,
-      linewidth: 6,              // thickness in screen pixels
+      linewidth: 8, // make it chunky
     });
-    // Prevent wireframe from occluding other objects
-    lineMat.depthWrite = false;
-    // Must match canvas size
+    // Must match CANVAS size (not window) or it won't show
     lineMat.resolution.set(mountRef.current.clientWidth, mountRef.current.clientHeight);
+    // Keep lines from occluding the black cube
+    lineMat.depthWrite = false;
 
     const wireCube = new LineSegments2(lineGeom, lineMat);
     wireCube.renderOrder = 0;
     scene.add(wireCube);
 
-    // === Orbiting black cube (solid) ===
+    // === Orbiting black cube ===
+    // DEBUG: set to true to center the black cube (no orbit) to prove visibility
+    const DEBUG_CENTER_BLACK = false;
+
     const pivot = new THREE.Object3D();
     scene.add(pivot);
 
-    const orbitSize = 1.4;       // bigger
-    const orbitRadius = 2.6;     // closer
+    const orbitSize = 2.0;      // BIG so you can't miss it
+    const orbitRadius = 2.2;    // close to the center
     const orbitGeom = new THREE.BoxGeometry(orbitSize, orbitSize, orbitSize);
-    const orbitMat = new THREE.MeshPhongMaterial({
-      color: 0x000000,
-      emissive: 0x111111,        // self-lit so it’s always visible
-      emissiveIntensity: 1.0,
+    const orbitMat = new THREE.MeshBasicMaterial({
+      color: 0x000000,   // pure black
     });
-    // Force it to draw on top of lines
+    // Make 100% sure it draws over the wireframe
     orbitMat.depthTest = false;
-    const orbitCube = new THREE.Mesh(orbitGeom, orbitMat);
-    orbitCube.frustumCulled = false; // never accidentally culled
-    orbitCube.renderOrder = 2;       // draw after wireframe
-    pivot.add(orbitCube);
-    orbitCube.position.set(orbitRadius, 0, 0);
 
-    // Lights (subtle)
-    const ambient = new THREE.AmbientLight(0xffffff, 0.4);
-    scene.add(ambient);
-    const key = new THREE.DirectionalLight(0xffffff, 0.6);
-    key.position.set(5, 7, 9);
-    scene.add(key);
+    const orbitCube = new THREE.Mesh(orbitGeom, orbitMat);
+    orbitCube.renderOrder = 2; // draw after wireframe
+    orbitCube.frustumCulled = false;
+    pivot.add(orbitCube);
+
+    if (DEBUG_CENTER_BLACK) {
+      // Park it right in the middle to confirm you can see it
+      orbitCube.position.set(0, 0, 0);
+    } else {
+      // Normal orbit start position
+      orbitCube.position.set(orbitRadius, 0, 0);
+    }
 
     // Animate
     const animate = () => {
@@ -92,11 +93,13 @@ const SpinningCube: React.FC = () => {
       wireCube.rotation.x += 0.01;
       wireCube.rotation.y += 0.01;
 
-      const t = performance.now() * 0.001;
-      pivot.rotation.y += 0.02;                 // horizontal orbit
-      pivot.rotation.x = Math.sin(t * 0.8) * 0.15; // gentle wobble
-      orbitCube.rotation.x += 0.03;
-      orbitCube.rotation.y += 0.03;
+      if (!DEBUG_CENTER_BLACK) {
+        const t = performance.now() * 0.001;
+        pivot.rotation.y += 0.02;                 // horizontal orbit
+        pivot.rotation.x = Math.sin(t * 0.8) * 0.15;
+        orbitCube.rotation.x += 0.03;
+        orbitCube.rotation.y += 0.03;
+      }
 
       renderer.render(scene, camera);
     };
@@ -110,7 +113,7 @@ const SpinningCube: React.FC = () => {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       rendererRef.current.setSize(w, h);
-      lineMat.resolution.set(w, h);
+      lineMat.resolution.set(w, h); // keep line thickness correct
     };
     window.addEventListener('resize', handleResize);
 
