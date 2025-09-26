@@ -1,5 +1,5 @@
 ---
-import HomePageCyberComputer from '../components/HomePageCyberComputer.tsx';
+import HomePageCyberComputer from './HomePageCyberComputer.tsx';
 ---
 
 <!-- ABOUT -->
@@ -24,7 +24,9 @@ import HomePageCyberComputer from '../components/HomePageCyberComputer.tsx';
 
       <!-- Image -->
       <figure class="lg:ml-auto">
-        <HomePageCyberComputer client:load />
+        <div class="relative">
+          <HomePageCyberComputer client:load />
+        </div>
       </figure>
     </div>
   </div>
