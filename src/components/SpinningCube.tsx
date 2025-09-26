@@ -42,7 +42,7 @@ const SpinningCube: React.FC = () => {
     mountRef.current.appendChild(renderer.domElement);
 
     // Cube edges geometry
-    const geometry = new THREE.BoxGeometry(5, 5, 5);
+    const geometry = new THREE.BoxGeometry(4, 4, 4);
     const edges = new THREE.EdgesGeometry(geometry);
 
     const lineGeometry = new LineSegmentsGeometry().fromEdgesGeometry(edges);
@@ -99,7 +99,7 @@ const SpinningCube: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[900px] bg-white overflow-visible">
+    <div className="relative w-full h-[600px] bg-white overflow-visible">
       <div ref={mountRef} className="w-full h-full" />
       <div className="absolute bottom-4 right-4 text-xs text-gray-500 font-mono">
         WebGL_STATUS: {webglStatus}
