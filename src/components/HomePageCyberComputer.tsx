@@ -40,44 +40,45 @@ const SpinningCube: React.FC = () => {
     rendererRef.current = renderer;
     mountRef.current.appendChild(renderer.domElement);
 
-    // === Emerald wireframe cube (outer edges only, thick lines) ===
+    // === Emerald wireframe cube (thick edges) ===
     const boxGeom = new THREE.BoxGeometry(5, 5, 5);
     const edges = new THREE.EdgesGeometry(boxGeom);
     const lineGeom = new LineSegmentsGeometry().fromEdgesGeometry(edges);
 
     const lineMat = new LineMaterial({
-      color: 0x1B998B, // brand emerald
-      linewidth: 5,    // thickness in screen pixels
+      color: 0x1B998B,
+      linewidth: 6,              // thickness in screen pixels
     });
-    // must match the canvas size (not window)
-    lineMat.resolution.set(
-      mountRef.current.clientWidth,
-      mountRef.current.clientHeight
-    );
+    // Prevent wireframe from occluding other objects
+    lineMat.depthWrite = false;
+    // Must match canvas size
+    lineMat.resolution.set(mountRef.current.clientWidth, mountRef.current.clientHeight);
 
     const wireCube = new LineSegments2(lineGeom, lineMat);
+    wireCube.renderOrder = 0;
     scene.add(wireCube);
 
     // === Orbiting black cube (solid) ===
     const pivot = new THREE.Object3D();
     scene.add(pivot);
 
-    const orbitSize = 1.1;       // size of the black cube
-    const orbitRadius = 3.0;     // distance from center
+    const orbitSize = 1.4;       // bigger
+    const orbitRadius = 2.6;     // closer
     const orbitGeom = new THREE.BoxGeometry(orbitSize, orbitSize, orbitSize);
-    const orbitMat = new THREE.MeshStandardMaterial({
+    const orbitMat = new THREE.MeshPhongMaterial({
       color: 0x000000,
-      emissive: 0x111111,        // self-lit so it pops on white
-      emissiveIntensity: 0.9,
-      metalness: 0,
-      roughness: 1,
+      emissive: 0x111111,        // self-lit so it’s always visible
+      emissiveIntensity: 1.0,
     });
+    // Force it to draw on top of lines
+    orbitMat.depthTest = false;
     const orbitCube = new THREE.Mesh(orbitGeom, orbitMat);
-    orbitCube.renderOrder = 1;   // draw over lines if needed
+    orbitCube.frustumCulled = false; // never accidentally culled
+    orbitCube.renderOrder = 2;       // draw after wireframe
     pivot.add(orbitCube);
     orbitCube.position.set(orbitRadius, 0, 0);
 
-    // Subtle lights (help on some GPUs)
+    // Lights (subtle)
     const ambient = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambient);
     const key = new THREE.DirectionalLight(0xffffff, 0.6);
@@ -93,7 +94,7 @@ const SpinningCube: React.FC = () => {
 
       const t = performance.now() * 0.001;
       pivot.rotation.y += 0.02;                 // horizontal orbit
-      pivot.rotation.x = Math.sin(t * 0.8) * 0.15; // gentle vertical wobble
+      pivot.rotation.x = Math.sin(t * 0.8) * 0.15; // gentle wobble
       orbitCube.rotation.x += 0.03;
       orbitCube.rotation.y += 0.03;
 
@@ -109,7 +110,7 @@ const SpinningCube: React.FC = () => {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       rendererRef.current.setSize(w, h);
-      lineMat.resolution.set(w, h); // keep line thickness consistent
+      lineMat.resolution.set(w, h);
     };
     window.addEventListener('resize', handleResize);
 
