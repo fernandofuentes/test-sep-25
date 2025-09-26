@@ -19,7 +19,8 @@ const SpinningCube: React.FC = () => {
     }
     setWebglStatus('ACTIVE');
 
-    // Scene & camera
+    console.log('Mount dimensions:', mountRef.current.clientWidth, mountRef.current.clientHeight);
+
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
 
@@ -29,65 +30,59 @@ const SpinningCube: React.FC = () => {
       0.1,
       2000
     );
-    camera.position.set(0, 0, 10);
+    camera.position.set(0, 0, 15); // Moved back slightly for testing
     camera.lookAt(0, 0, 0);
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     rendererRef.current = renderer;
     mountRef.current.appendChild(renderer.domElement);
 
-    // === Emerald wireframe cube (outer edges only, thick lines) ===
+    // Wireframe cube
     const boxGeom = new THREE.BoxGeometry(5, 5, 5);
     const edges = new THREE.EdgesGeometry(boxGeom);
     const lineGeom = new LineSegmentsGeometry().fromEdgesGeometry(edges);
 
     const lineMat = new LineMaterial({
       color: 0x1B998B,
-      linewidth: 8, // make it chunky
+      linewidth: 8,
     });
-    // Must match CANVAS size (not window) or it won't show
     lineMat.resolution.set(mountRef.current.clientWidth, mountRef.current.clientHeight);
-    // Keep lines from occluding the black cube
     lineMat.depthWrite = false;
 
     const wireCube = new LineSegments2(lineGeom, lineMat);
     wireCube.renderOrder = 0;
-    scene.add(wireCube);
+    // scene.add(wireCube); // Comment out to test black cube alone
 
-    // === Orbiting black cube ===
-    // DEBUG: set to true to center the black cube (no orbit) to prove visibility
-    const DEBUG_CENTER_BLACK = false;
-
+    // Black cube
     const pivot = new THREE.Object3D();
     scene.add(pivot);
 
-    const orbitSize = 2.0;      // BIG so you can't miss it
-    const orbitRadius = 2.2;    // close to the center
+    const orbitSize = 2.0;
+    const orbitRadius = 2.2;
     const orbitGeom = new THREE.BoxGeometry(orbitSize, orbitSize, orbitSize);
     const orbitMat = new THREE.MeshBasicMaterial({
-      color: 0x000000,   // pure black
+      color: 0xff0000, // Changed to red for visibility
     });
-    // Make 100% sure it draws over the wireframe
     orbitMat.depthTest = false;
 
     const orbitCube = new THREE.Mesh(orbitGeom, orbitMat);
-    orbitCube.renderOrder = 2; // draw after wireframe
+    orbitCube.renderOrder = 2;
     orbitCube.frustumCulled = false;
     pivot.add(orbitCube);
 
+    const DEBUG_CENTER_BLACK = true; // Center the cube for testing
     if (DEBUG_CENTER_BLACK) {
-      // Park it right in the middle to confirm you can see it
       orbitCube.position.set(0, 0, 0);
     } else {
-      // Normal orbit start position
       orbitCube.position.set(orbitRadius, 0, 0);
     }
 
-    // Animate
+    console.log('Orbit cube:', orbitCube.geometry, orbitCube.material);
+
     const animate = () => {
+      console.log('Animation frame');
       frameRef.current = requestAnimationFrame(animate);
 
       wireCube.rotation.x += 0.01;
@@ -95,17 +90,21 @@ const SpinningCube: React.FC = () => {
 
       if (!DEBUG_CENTER_BLACK) {
         const t = performance.now() * 0.001;
-        pivot.rotation.y += 0.02;                 // horizontal orbit
+        pivot.rotation.y += 0.02;
         pivot.rotation.x = Math.sin(t * 0.8) * 0.15;
         orbitCube.rotation.x += 0.03;
         orbitCube.rotation.y += 0.03;
       }
 
+      // Log cube position
+      const worldPos = new THREE.Vector3();
+      orbitCube.getWorldPosition(worldPos);
+      console.log('Black cube position:', worldPos);
+
       renderer.render(scene, camera);
     };
     animate();
 
-    // Resize
     const handleResize = () => {
       if (!mountRef.current || !rendererRef.current) return;
       const w = mountRef.current.clientWidth;
@@ -113,11 +112,10 @@ const SpinningCube: React.FC = () => {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       rendererRef.current.setSize(w, h);
-      lineMat.resolution.set(w, h); // keep line thickness correct
+      lineMat.resolution.set(w, h);
     };
     window.addEventListener('resize', handleResize);
 
-    // Cleanup
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
       window.removeEventListener('resize', handleResize);
