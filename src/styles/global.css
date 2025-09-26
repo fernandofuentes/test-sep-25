@@ -3,7 +3,6 @@
 
 /* === Brand Theme Tokens === */
 @theme {
-  /* Colors */
   --color-brand-emerald:       #1B998B;
   --color-brand-emerald-dark:  #147166;
   --color-brand-black:         #000000;
@@ -11,45 +10,44 @@
   --color-brand-gray:          #4B5563;
   --color-brand-lightgray:     #F5F5F5;
 
-  /* Fonts */
   --font-brand: "Veneer", "Poppins", sans-serif;
-  --font-sans: "Poppins", system-ui, sans-serif; /* fallback for body text */
+  --font-sans: "Poppins", system-ui, sans-serif;
 }
 
-/* === Custom Button Components === */
 @layer components {
-  /* Angled Fill Button */
+  /* ========== Angled Fill Buttons ========== */
+
+  /* Default (white → black fill) */
   .brand-button-fill {
     position: relative;
     display: inline-block;
-    border-radius: 0.375rem; /* rounded-md */
-    padding: 0.75rem 1.25rem; /* py-3 px-5 */
+    border-radius: 0.5rem; /* adjust as you like */
+    padding: 0.75rem 1.5rem;
     font-size: 0.875rem; /* text-sm */
     font-weight: 600;
     overflow: hidden;
     background: var(--color-brand-white);
     color: var(--color-brand-black);
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.07);
-    isolation: isolate; /* keep pseudo behind text */
+    isolation: isolate;
   }
 
-  /* Angled background wipe */
-.brand-button-fill::before {
-  content: "";
-  position: absolute;
-  /* bleed a bit past all sides to avoid gaps on skew + radius */
-  inset: -2px;                 /* was: inset: 0 */
-  z-index: 0;
-  background: var(--color-brand-black);
-  border-radius: inherit;      /* cover rounded corners */
-  /* start off-screen with an angle; make it wider so no gaps show */
-  transform: translateX(-110%) skewX(-12deg) scaleX(1.15);
-  transform-origin: left center;
-  transition: transform 0.45s ease;
-  will-change: transform;
-}
+  .brand-button-fill::before {
+    content: "";
+    position: absolute;
+    /* bleed outside to cover skew gaps */
+    top: -4px;
+    bottom: -4px;
+    left: -8px;
+    right: -8px;
+    z-index: 0;
+    background: var(--color-brand-black);
+    border-radius: inherit;
+    transform: translateX(-105%) skewX(-12deg) scaleX(1.25);
+    transform-origin: left center;
+    transition: transform 0.45s ease;
+    will-change: transform;
+  }
 
-  /* Two text layers: base and overlay */
   .brand-button-fill .label {
     position: relative;
     z-index: 1;
@@ -67,11 +65,10 @@
     pointer-events: none;
   }
 
-  /* Hover/focus triggers */
-.brand-button-fill:hover::before,
-.brand-button-fill:focus-visible::before {
-  transform: translateX(0) skewX(-12deg) scaleX(1.15);
-}
+  .brand-button-fill:hover::before,
+  .brand-button-fill:focus-visible::before {
+    transform: translateX(0) skewX(-12deg) scaleX(1.25);
+  }
 
   .brand-button-fill:hover .label--overlay,
   .brand-button-fill:focus-visible .label--overlay {
@@ -83,10 +80,65 @@
     outline-offset: 2px;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .brand-button-fill::before,
-    .brand-button-fill .label--overlay {
-      transition: none;
-    }
+  /* ========== Emerald Variant (white → emerald fill) ========== */
+  .brand-button-fill-emerald {
+    position: relative;
+    display: inline-block;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    overflow: hidden;
+    background: var(--color-brand-white);
+    color: var(--color-brand-black);
+    isolation: isolate;
+  }
+
+  .brand-button-fill-emerald::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    left: -8px;
+    right: -8px;
+    z-index: 0;
+    background: var(--color-brand-emerald);
+    border-radius: inherit;
+    transform: translateX(-105%) skewX(-12deg) scaleX(1.25);
+    transform-origin: left center;
+    transition: transform 0.45s ease;
+    will-change: transform;
+  }
+
+  .brand-button-fill-emerald .label {
+    position: relative;
+    z-index: 1;
+    display: block;
+  }
+
+  .brand-button-fill-emerald .label--overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--color-brand-white);
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.45s ease;
+    pointer-events: none;
+  }
+
+  .brand-button-fill-emerald:hover::before,
+  .brand-button-fill-emerald:focus-visible::before {
+    transform: translateX(0) skewX(-12deg) scaleX(1.25);
+  }
+
+  .brand-button-fill-emerald:hover .label--overlay,
+  .brand-button-fill-emerald:focus-visible .label--overlay {
+    clip-path: inset(0 0 0 0);
+  }
+
+  .brand-button-fill-emerald:focus-visible {
+    outline: 2px solid var(--color-brand-emerald-dark);
+    outline-offset: 2px;
   }
 }
