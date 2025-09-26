@@ -1,0 +1,32 @@
+---
+import '@tailwindplus/elements';
+import "../styles/global.css";
+import GlobalCTA from '../components/GlobalCTA.astro'
+import GlobalFooter from '../components/GlobalFooter.astro'
+---
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" as="video" href="/videos/web-development.mp4" type="video/mp4" fetchpriority="high">
+		<meta name="generator" content={Astro.generator} />
+		<title>Websites & SEO - Unwritten Agency | Custom Web Design & Search Optimization</title>
+		<meta name="description" content="Professional website design and SEO services in The Woodlands, Texas. Custom websites that rank high in search engines and convert visitors into customers." />
+	</head>
+	<body>
+		<slot />
+    <GlobalCTA />
+    <GlobalFooter />
+	</body>
+</html>
+
+<style>
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+	}
+</style>

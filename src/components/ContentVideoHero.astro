@@ -1,0 +1,143 @@
+---
+// src/components/ContentVideoHero.astro
+import GlobalHeader from './GlobalHeader.astro';
+---
+
+<section id="hero" class="relative isolate min-h-screen bg-white dark:bg-gray-900">
+  <!-- Overlay header so it doesn't consume layout height -->
+  <div class="absolute inset-x-0 top-0 z-20">
+    <GlobalHeader />
+  </div>
+
+  <!-- Background video (behind content) -->
+  <div class="absolute inset-0 -z-10 pointer-events-none">
+    <video
+      id="hero-video"
+      class="w-full h-full object-cover"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster="/images/beach-image.png"
+      aria-hidden="true"
+    >
+      <source src="/videos/beach.mp4" type="video/mp4" />
+    </video>
+
+    <!-- Tint over video -->
+    <div class="absolute inset-0 bg-gradient-to-b from-brand-black/70 via-brand-black/80 to-brand-black/70"></div>
+
+    <!-- Animated gradient fallback -->
+    <div id="gradient-fallback" class="hidden absolute inset-0"></div>
+  </div>
+
+  <!-- Decorative blobs (further back) -->
+  <div aria-hidden="true" class="absolute inset-x-0 -top-40 -z-20 transform-gpu overflow-hidden blur-3xl sm:-top-80">
+    <div
+      class="relative left-[calc(50%-11rem)] aspect-1155/678 w-144.5 -translate-x-1/2 rotate-30 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-288.75">
+    </div>
+  </div>
+  
+<!-- HERO COPY -->
+<div class="flex min-h-screen items-center justify-center">
+  <div class="max-w-6xl text-center">
+    <h1 class="mx-auto text-white text-5xl sm:text-7xl font-semibold tracking-tight leading-tight">
+      Content & Videos That Tell Your Story
+    </h1>
+
+    <p class="mx-auto mt-8 max-w-3xl text-white/90 text-lg sm:text-xl leading-relaxed">
+      <strong>Unwritten Agency</strong> produces engaging content and professional videos that capture your 
+      brand's essence and connect with your audience. From social media content to promotional videos, 
+      we create compelling stories that drive engagement and results.
+    </p>
+
+    <div class="mt-12 flex items-center justify-center gap-6">
+      <!-- Black Fill -->
+      <a href="/contact" class="brand-button-fill">
+        <span class="label">Create Your Content</span>
+        <span class="label label--overlay" aria-hidden="true">Create Your Content</span>
+      </a>
+
+      <!-- White Outline → White Fill + Black Text -->
+      <a href="/portfolio" class="brand-button-outline">
+        <span class="label">View Our Videos</span>
+        <span class="label label--overlay" aria-hidden="true">View Our Videos</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+    <!-- Animated scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+      <div class="flex flex-col items-center animate-bounce">
+        <span class="text-white/80 text-sm font-medium mb-2">Scroll</span>
+        <svg 
+          class="w-6 h-6 text-white/80" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2" 
+            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+          />
+        </svg>
+      </div>
+    </div>
+
+  <!-- Bottom decorative blob -->
+  <div aria-hidden="true" class="absolute inset-x-0 top-[calc(100%-13rem)] -z-20 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+    <div
+      class="relative left-[calc(50%+3rem)] aspect-1155/678 w-144.5 -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%+36rem)] sm:w-288.75">
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const video = document.getElementById('hero-video');
+  const fallback = document.getElementById('gradient-fallback');
+
+  if (!video) {
+    showFallback();
+    return;
+  }
+
+  const loadTimeout = setTimeout(showFallback, 3000);
+
+  video.addEventListener('canplay', () => clearTimeout(loadTimeout));
+  video.addEventListener('loadeddata', () => clearTimeout(loadTimeout));
+  video.addEventListener('playing', hideFallback);
+  video.addEventListener('error', () => { clearTimeout(loadTimeout); showFallback(); });
+
+  video.play().catch(showFallback);
+
+  function showFallback() { if (fallback) fallback.classList.remove('hidden'); }
+  function hideFallback() { if (fallback) fallback.classList.add('hidden'); }
+});
+</script>
+
+<style>
+/* Make video always cover viewport */
+#hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  min-height: 100vh;
+}
+
+/* Animated gradient fallback */
+@keyframes gradientShift {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+#gradient-fallback {
+  background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+</style>
