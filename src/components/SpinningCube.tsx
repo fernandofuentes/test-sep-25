@@ -43,7 +43,7 @@ const SpinningCube: React.FC = () => {
     const edges = new THREE.EdgesGeometry(geometry); // only edges
     const material = new THREE.LineBasicMaterial({
       color: 0x1B998B, // brand emerald
-      linewidth: 7,    // not always respected in Chrome
+      linewidth: 3,    // not always respected in Chrome
     });
     const cube = new THREE.LineSegments(edges, material);
     scene.add(cube);
