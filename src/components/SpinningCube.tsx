@@ -42,7 +42,7 @@ const SpinningCube: React.FC = () => {
     mountRef.current.appendChild(renderer.domElement);
 
     // Cube edges geometry
-    const geometry = new THREE.BoxGeometry(4, 4, 4);
+    const geometry = new THREE.BoxGeometry(6, 6, 6);
     const edges = new THREE.EdgesGeometry(geometry);
 
     const lineGeometry = new LineSegmentsGeometry().fromEdgesGeometry(edges);
