@@ -99,7 +99,7 @@ const SpinningCube: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[500px] bg-white overflow-visible">
+    <div className="relative w-full h-[384px] bg-white overflow-visible">
       <div ref={mountRef} className="w-full h-full" />
       <div className="absolute bottom-4 right-4 text-xs text-gray-500 font-mono">
         WebGL_STATUS: {webglStatus}
