@@ -1,5 +1,5 @@
 ---
-import HomePageCyberComputer from "../components/HomePageCyberComputer.tsx";
+import SpinningCube from "../components/SpinningCube.tsx";
 ---
 
 <!-- ABOUT -->
@@ -22,13 +22,10 @@ import HomePageCyberComputer from "../components/HomePageCyberComputer.tsx";
         </header>
       </div>
 
-      <!-- Visual -->
-      <div class="flex items-center justify-center">
-        <div class="w-full h-[400px] sm:h-[480px] lg:h-[540px]">
-          <HomePageCyberComputer client:visible />
-        </div>
+      <!-- 3D Cube -->
+      <div class="relative h-96">
+        <SpinningCube client:visible />
       </div>
-
     </div>
   </div>
 </section>
