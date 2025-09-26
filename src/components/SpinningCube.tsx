@@ -39,7 +39,7 @@ const SpinningCube: React.FC = () => {
     mountRef.current.appendChild(renderer.domElement);
 
     // Cube edges (only outlines, no diagonals)
-    const geometry = new THREE.BoxGeometry(4, 4, 4); // bigger cube
+    const geometry = new THREE.BoxGeometry(7, 7, 7); // bigger cube
     const edges = new THREE.EdgesGeometry(geometry); // only edges
     const material = new THREE.LineBasicMaterial({
       color: 0x1B998B, // brand emerald
