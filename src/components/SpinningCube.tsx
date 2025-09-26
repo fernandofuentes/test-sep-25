@@ -18,18 +18,18 @@ const SpinningCube: React.FC = () => {
 
     setWebglStatus('ACTIVE');
 
-    // Scene setup
+    // Scene
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xffffff); // white background
+    scene.background = new THREE.Color(0xffffff);
 
     // Camera
     const camera = new THREE.PerspectiveCamera(
       60,
       mountRef.current.clientWidth / mountRef.current.clientHeight,
       0.1,
-      1000
+      2000
     );
-    camera.position.z = 5;
+    camera.position.z = 6; // zoom out so cube isn't cropped
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -38,13 +38,14 @@ const SpinningCube: React.FC = () => {
     rendererRef.current = renderer;
     mountRef.current.appendChild(renderer.domElement);
 
-    // Wireframe Cube (green outline)
-    const geometry = new THREE.BoxGeometry(3.5, 3.5, 3.5);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x1B998B,
-      wireframe: true, // only outline
+    // Cube edges (only outlines, no diagonals)
+    const geometry = new THREE.BoxGeometry(4, 4, 4); // bigger cube
+    const edges = new THREE.EdgesGeometry(geometry); // only edges
+    const material = new THREE.LineBasicMaterial({
+      color: 0x1B998B, // brand emerald
+      linewidth: 3,    // not always respected in Chrome
     });
-    const cube = new THREE.Mesh(geometry, material);
+    const cube = new THREE.LineSegments(edges, material);
     scene.add(cube);
 
     // Animate
@@ -78,7 +79,8 @@ const SpinningCube: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[500px] sm:h-[600px] lg:h-[700px] bg-white overflow-hidden">
+    <div className="relative w-full h-[600px] bg-white overflow-visible">
+      {/* overflow-visible lets cube extend beyond */}
       <div ref={mountRef} className="w-full h-full" />
       <div className="absolute bottom-4 right-4 text-xs text-gray-500 font-mono">
         WebGL_STATUS: {webglStatus}
