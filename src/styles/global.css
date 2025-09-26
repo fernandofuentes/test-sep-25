@@ -1,35 +1,44 @@
 /* src/styles/global.css */
 @import "tailwindcss";
 
+/* === Brand Theme Tokens === */
 @theme {
-  /* === Brand Colors === */
-  --color-brand-emerald:   #1B998B;
-  --color-brand-black:     #000000;
-  --color-brand-white:     #FFFFFF;
-  --color-brand-gray:      #4B5563;
-  --color-brand-lightgray: #F5F5F5;
-  --color-brand-emerald-dark: #147166;
+  /* Colors */
+  --color-brand-emerald:       #1B998B;
+  --color-brand-emerald-dark:  #147166;
+  --color-brand-black:         #000000;
+  --color-brand-white:         #FFFFFF;
+  --color-brand-gray:          #4B5563;
+  --color-brand-lightgray:     #F5F5F5;
 
-  /* === Brand Fonts === */
+  /* Fonts */
   --font-brand: "Veneer", "Poppins", sans-serif;
   --font-sans: "Poppins", system-ui, sans-serif; /* fallback for body text */
 }
 
-/* === Custom Button Components === */
+/* === Custom Components === */
 @layer components {
+  /* Solid Black Button → White text. Inverts on hover. */
   .brand-button {
-    @apply rounded-md bg-brand-emerald px-5 py-3 text-sm font-semibold text-brand-white shadow 
-           hover:bg-brand-emerald-dark focus-visible:outline-2 focus-visible:outline-offset-2 
-           focus-visible:outline-brand-emerald;
+    @apply rounded-md bg-brand-black px-5 py-3 text-sm font-semibold text-brand-white shadow 
+           hover:bg-brand-white hover:text-brand-black 
+           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-black
+           transition-colors duration-300;
   }
 
+  /* Outline Button → Black border + text. Fills on hover. */
   .brand-button-outline {
-    @apply rounded-md border border-brand-emerald px-5 py-3 text-sm font-semibold text-brand-emerald 
-           hover:bg-brand-emerald hover:text-brand-white;
+    @apply rounded-md border border-brand-black px-5 py-3 text-sm font-semibold text-brand-black 
+           hover:bg-brand-black hover:text-brand-white 
+           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-black
+           transition-colors duration-300;
   }
 
+  /* Optional Light Gray Button (alt style) */
   .brand-button-light {
     @apply rounded-md bg-brand-lightgray px-5 py-3 text-sm font-semibold text-brand-black 
-           hover:bg-brand-emerald hover:text-brand-white;
+           hover:bg-brand-emerald hover:text-brand-white 
+           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-emerald
+           transition-colors duration-300;
   }
 }
