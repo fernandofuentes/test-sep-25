@@ -24,12 +24,12 @@ const SpinningCube: React.FC = () => {
 
     // Camera
     const camera = new THREE.PerspectiveCamera(
-      75,
+      60, // narrower FOV so the cube looks bigger
       mountRef.current.clientWidth / mountRef.current.clientHeight,
       0.1,
       1000
     );
-    camera.position.z = 5;
+    camera.position.z = 3; // closer in
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -39,20 +39,23 @@ const SpinningCube: React.FC = () => {
     mountRef.current.appendChild(renderer.domElement);
 
     // Cube (brand emerald color)
-    const geometry = new THREE.BoxGeometry(2, 2, 2);
-    const material = new THREE.MeshPhongMaterial({ color: 0x1B998B }); // brand emerald
+    const geometry = new THREE.BoxGeometry(3.5, 3.5, 3.5); // much larger cube
+    const material = new THREE.MeshPhongMaterial({ color: 0x1B998B });
     const cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
 
     // Lighting
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(3, 3, 5).normalize();
+    const light = new THREE.DirectionalLight(0xffffff, 1.2);
+    light.position.set(5, 5, 5).normalize();
     scene.add(light);
+
+    const ambientLight = new THREE.AmbientLight(0x999999, 0.5);
+    scene.add(ambientLight);
 
     // Animate
     const animate = () => {
       frameRef.current = requestAnimationFrame(animate);
-      cube.rotation.x += 0.01;
+      cube.rotation.x += 0.008;
       cube.rotation.y += 0.01;
       renderer.render(scene, camera);
     };
@@ -80,7 +83,7 @@ const SpinningCube: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-96 bg-white overflow-hidden">
+    <div className="relative w-full h-[500px] sm:h-[600px] lg:h-[700px] bg-white overflow-hidden">
       <div ref={mountRef} className="w-full h-full" />
       <div className="absolute bottom-4 right-4 text-xs text-gray-500 font-mono">
         WebGL_STATUS: {webglStatus}
