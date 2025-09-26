@@ -177,4 +177,60 @@
   clip-path: inset(0 0 0 0);
 }
 
+  /* ========== Angled Fill Button (Emerald → Emerald Dark) ========== */
+.brand-button-fill-emerald-dark {
+  position: relative;
+  display: inline-block;
+  border-radius: 0;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  overflow: hidden;
+  background: var(--color-brand-emerald);
+  color: var(--color-brand-white); /* stays white */
+  isolation: isolate;
+}
+
+.brand-button-fill-emerald-dark::before {
+  content: "";
+  position: absolute;
+  top: -4px; bottom: -4px; left: -8px; right: -8px;
+  z-index: 0;
+  background: var(--color-brand-emerald-dark); /* hover color */
+  border-radius: inherit;
+  clip-path: inset(0 100% 0 0);
+  transform: skewX(-12deg) scaleX(1.25);
+  transform-origin: left center;
+  transition: clip-path 0.45s ease;
+}
+
+.brand-button-fill-emerald-dark .label {
+  position: relative;
+  z-index: 1;
+  display: block;
+  color: var(--color-brand-white); /* ensures text stays white */
+}
+
+.brand-button-fill-emerald-dark .label--overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--color-brand-white); /* overlay stays white too */
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.45s ease;
+  pointer-events: none;
+}
+
+.brand-button-fill-emerald-dark:hover::before,
+.brand-button-fill-emerald-dark:focus-visible::before {
+  clip-path: inset(0 0 0 0);
+}
+
+.brand-button-fill-emerald-dark:hover .label--overlay,
+.brand-button-fill-emerald-dark:focus-visible .label--overlay {
+  clip-path: inset(0 0 0 0);
+}
+
+
 }
