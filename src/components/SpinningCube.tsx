@@ -32,7 +32,7 @@ const SpinningCube: React.FC = () => {
       0.1,
       2000
     );
-    camera.position.z = 8;
+    camera.position.z = 10;
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -42,17 +42,20 @@ const SpinningCube: React.FC = () => {
     mountRef.current.appendChild(renderer.domElement);
 
     // Cube edges geometry
-    const geometry = new THREE.BoxGeometry(5, 5, 5); // cube size
+    const geometry = new THREE.BoxGeometry(5, 5, 5);
     const edges = new THREE.EdgesGeometry(geometry);
 
-    // Convert edges to LineSegments2
     const lineGeometry = new LineSegmentsGeometry().fromEdgesGeometry(edges);
     const lineMaterial = new LineMaterial({
       color: 0x1B998B, // emerald green
-      linewidth: 0.008, // relative to screen size! (experiment: 0.005–0.02)
-      dashed: false,
+      linewidth: 5,    // thickness in screen pixels
     });
-    lineMaterial.resolution.set(window.innerWidth, window.innerHeight);
+
+    // IMPORTANT: match canvas size
+    lineMaterial.resolution.set(
+      mountRef.current.clientWidth,
+      mountRef.current.clientHeight
+    );
 
     const cube = new LineSegments2(lineGeometry, lineMaterial);
     scene.add(cube);
@@ -72,7 +75,12 @@ const SpinningCube: React.FC = () => {
       camera.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
       camera.updateProjectionMatrix();
       rendererRef.current.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
-      lineMaterial.resolution.set(window.innerWidth, window.innerHeight);
+
+      // update line thickness scaling
+      lineMaterial.resolution.set(
+        mountRef.current.clientWidth,
+        mountRef.current.clientHeight
+      );
     };
     window.addEventListener('resize', handleResize);
 
