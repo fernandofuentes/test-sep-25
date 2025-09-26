@@ -29,7 +29,7 @@ const SpinningCube: React.FC = () => {
       0.1,
       2000
     );
-    camera.position.z = 7; // zoom out so cube isn't cropped
+    camera.position.z = 5; // zoom out so cube isn't cropped
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
