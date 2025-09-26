@@ -34,16 +34,20 @@
   }
 
   /* Angled background wipe */
-  .brand-button-fill::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background: var(--color-brand-black);
-    transform: translateX(-105%) skewX(-12deg);
-    transform-origin: left center;
-    transition: transform 0.45s ease;
-  }
+.brand-button-fill::before {
+  content: "";
+  position: absolute;
+  /* bleed a bit past all sides to avoid gaps on skew + radius */
+  inset: -2px;                 /* was: inset: 0 */
+  z-index: 0;
+  background: var(--color-brand-black);
+  border-radius: inherit;      /* cover rounded corners */
+  /* start off-screen with an angle; make it wider so no gaps show */
+  transform: translateX(-110%) skewX(-12deg) scaleX(1.15);
+  transform-origin: left center;
+  transition: transform 0.45s ease;
+  will-change: transform;
+}
 
   /* Two text layers: base and overlay */
   .brand-button-fill .label {
@@ -64,10 +68,10 @@
   }
 
   /* Hover/focus triggers */
-  .brand-button-fill:hover::before,
-  .brand-button-fill:focus-visible::before {
-    transform: translateX(0%) skewX(-12deg);
-  }
+.brand-button-fill:hover::before,
+.brand-button-fill:focus-visible::before {
+  transform: translateX(0) skewX(-12deg) scaleX(1.15);
+}
 
   .brand-button-fill:hover .label--overlay,
   .brand-button-fill:focus-visible .label--overlay {
