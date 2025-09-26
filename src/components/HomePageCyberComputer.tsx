@@ -1,7 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
+import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js';
+import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 
-const HomePageCyberComputer: React.FC = () => {
+const SpinningCube: React.FC = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const frameRef = useRef<number>();
@@ -11,7 +14,6 @@ const HomePageCyberComputer: React.FC = () => {
     if (!mountRef.current) return;
 
     if (!window.WebGLRenderingContext) {
-      console.error('WebGL not supported');
       setWebglStatus('ERROR');
       return;
     }
@@ -29,7 +31,7 @@ const HomePageCyberComputer: React.FC = () => {
       2000
     );
     camera.position.set(0, 0, 10);
-    camera.lookAt(0, 0, 0); // ensure we're looking at the origin
+    camera.lookAt(0, 0, 0);
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -38,74 +40,60 @@ const HomePageCyberComputer: React.FC = () => {
     rendererRef.current = renderer;
     mountRef.current.appendChild(renderer.domElement);
 
-    // ----- Main computer (simplified block) -----
-    const computerGroup = new THREE.Group();
-    const bodyGeometry = new THREE.BoxGeometry(2, 1.5, 1);
-    const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0x1a1a1a, shininess: 100 });
-    const computerBody = new THREE.Mesh(bodyGeometry, bodyMaterial);
-    computerBody.castShadow = true;
-    computerGroup.add(computerBody);
-    scene.add(computerGroup);
+    // === Emerald wireframe cube (outer edges only, thick lines) ===
+    const boxGeom = new THREE.BoxGeometry(5, 5, 5);
+    const edges = new THREE.EdgesGeometry(boxGeom);
+    const lineGeom = new LineSegmentsGeometry().fromEdgesGeometry(edges);
 
-    // ----- Floating cyan cubes -----
-    const cubes: THREE.Mesh[] = [];
-    for (let i = 0; i < 5; i++) {
-      const cubeGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
-      const cubeMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff });
-      const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-      scene.add(cube);
-      cubes.push(cube);
-    }
+    const lineMat = new LineMaterial({
+      color: 0x1B998B, // brand emerald
+      linewidth: 5,    // thickness in screen pixels
+    });
+    // must match the canvas size (not window)
+    lineMat.resolution.set(
+      mountRef.current.clientWidth,
+      mountRef.current.clientHeight
+    );
 
-    // ----- Orbiting black cube (via pivot) -----
+    const wireCube = new LineSegments2(lineGeom, lineMat);
+    scene.add(wireCube);
+
+    // === Orbiting black cube (solid) ===
     const pivot = new THREE.Object3D();
     scene.add(pivot);
 
-    const orbitCubeGeometry = new THREE.BoxGeometry(1.2, 1.2, 1.2); // bigger so it's obvious
-    const orbitCubeMaterial = new THREE.MeshPhongMaterial({
+    const orbitSize = 1.1;       // size of the black cube
+    const orbitRadius = 3.0;     // distance from center
+    const orbitGeom = new THREE.BoxGeometry(orbitSize, orbitSize, orbitSize);
+    const orbitMat = new THREE.MeshStandardMaterial({
       color: 0x000000,
-      emissive: 0x111111,        // self-lit so it remains visible
-      emissiveIntensity: 0.8,
+      emissive: 0x111111,        // self-lit so it pops on white
+      emissiveIntensity: 0.9,
+      metalness: 0,
+      roughness: 1,
     });
-    const orbitCube = new THREE.Mesh(orbitCubeGeometry, orbitCubeMaterial);
-    orbitCube.castShadow = true;
+    const orbitCube = new THREE.Mesh(orbitGeom, orbitMat);
+    orbitCube.renderOrder = 1;   // draw over lines if needed
     pivot.add(orbitCube);
+    orbitCube.position.set(orbitRadius, 0, 0);
 
-    const ORBIT_RADIUS = 3;      // closer to the center so it’s in frame
-    orbitCube.position.set(ORBIT_RADIUS, 0, 0);
+    // Subtle lights (help on some GPUs)
+    const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+    scene.add(ambient);
+    const key = new THREE.DirectionalLight(0xffffff, 0.6);
+    key.position.set(5, 7, 9);
+    scene.add(key);
 
-    // ----- Lights -----
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
-
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    keyLight.position.set(5, 5, 7);
-    keyLight.castShadow = true;
-    scene.add(keyLight);
-
-    // ----- Animate -----
+    // Animate
     const animate = () => {
       frameRef.current = requestAnimationFrame(animate);
 
-      // Spin computer
-      computerGroup.rotation.y += 0.005;
+      wireCube.rotation.x += 0.01;
+      wireCube.rotation.y += 0.01;
 
-      // Floaters
       const t = performance.now() * 0.001;
-      cubes.forEach((cube, index) => {
-        const angle = (index / 5) * Math.PI * 2 + t * 0.5;
-        cube.position.set(
-          Math.cos(angle) * 8,
-          Math.sin(angle * 0.5 + t) * 3,
-          Math.sin(angle) * 8
-        );
-        cube.rotation.x += 0.02;
-        cube.rotation.y += 0.02;
-      });
-
-      // Orbiting cube
-      pivot.rotation.y += 0.02;                          // horizontal orbit
-      pivot.rotation.x = Math.sin(t * 0.8) * 0.15;       // slight vertical wobble
+      pivot.rotation.y += 0.02;                 // horizontal orbit
+      pivot.rotation.x = Math.sin(t * 0.8) * 0.15; // gentle vertical wobble
       orbitCube.rotation.x += 0.03;
       orbitCube.rotation.y += 0.03;
 
@@ -113,16 +101,19 @@ const HomePageCyberComputer: React.FC = () => {
     };
     animate();
 
-    // ----- Resize -----
+    // Resize
     const handleResize = () => {
       if (!mountRef.current || !rendererRef.current) return;
-      camera.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
+      const w = mountRef.current.clientWidth;
+      const h = mountRef.current.clientHeight;
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      rendererRef.current.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
+      rendererRef.current.setSize(w, h);
+      lineMat.resolution.set(w, h); // keep line thickness consistent
     };
     window.addEventListener('resize', handleResize);
 
-    // ----- Cleanup -----
+    // Cleanup
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
       window.removeEventListener('resize', handleResize);
@@ -130,14 +121,12 @@ const HomePageCyberComputer: React.FC = () => {
         mountRef.current.removeChild(rendererRef.current.domElement);
         rendererRef.current.dispose();
       }
-      bodyGeometry.dispose();
-      bodyMaterial.dispose();
-      cubes.forEach((cube) => {
-        cube.geometry.dispose();
-        (cube.material as THREE.Material).dispose();
-      });
-      orbitCubeGeometry.dispose();
-      orbitCubeMaterial.dispose();
+      boxGeom.dispose();
+      edges.dispose();
+      lineGeom.dispose();
+      lineMat.dispose();
+      orbitGeom.dispose();
+      orbitMat.dispose();
       scene.remove(pivot);
     };
   }, []);
@@ -152,4 +141,4 @@ const HomePageCyberComputer: React.FC = () => {
   );
 };
 
-export default HomePageCyberComputer;
+export default SpinningCube;
