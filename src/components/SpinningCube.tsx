@@ -1,107 +1,160 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
-import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js';
-import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
-import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
+import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2';
+import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
 
 const SpinningCube: React.FC = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const frameRef = useRef<number>();
   const [webglStatus, setWebglStatus] = useState('LOADING');
 
   useEffect(() => {
-    if (!mountRef.current) return;
+    // Check if mount exists
+    if (!mountRef.current) {
+      console.error('Mount ref is missing');
+      setWebglStatus('ERROR');
+      return;
+    }
 
+    // Check WebGL support
     if (!window.WebGLRenderingContext) {
       console.error('WebGL not supported');
       setWebglStatus('ERROR');
       return;
     }
 
+    // Log canvas dimensions for debugging
+    console.log('Canvas dimensions:', mountRef.current.clientWidth, mountRef.current.clientHeight);
     setWebglStatus('ACTIVE');
 
-    // Scene
+    // Scene setup
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xffffff);
+    scene.background = new THREE.Color(0xffffff); // White background
 
-    // Camera
+    // Camera setup
     const camera = new THREE.PerspectiveCamera(
       60,
       mountRef.current.clientWidth / mountRef.current.clientHeight,
       0.1,
-      2000
+      1000
     );
-    camera.position.z = 10;
+    camera.position.set(0, 0, 15); // Camera at z = 15
+    camera.lookAt(0, 0, 0);
 
-    // Renderer
+    // Renderer setup
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     rendererRef.current = renderer;
     mountRef.current.appendChild(renderer.domElement);
 
-    // Cube edges geometry
-    const geometry = new THREE.BoxGeometry(4, 4, 4);
-    const edges = new THREE.EdgesGeometry(geometry);
-
-    const lineGeometry = new LineSegmentsGeometry().fromEdgesGeometry(edges);
+    // Wireframe cube (emerald, thick lines)
+    const boxGeometry = new THREE.BoxGeometry(5, 5, 5);
+    const edgesGeometry = new THREE.EdgesGeometry(boxGeometry);
+    const lineGeometry = new LineSegmentsGeometry().fromEdgesGeometry(edgesGeometry);
     const lineMaterial = new LineMaterial({
-      color: 0x1B998B, // emerald green
-      linewidth: 3,    // thickness in screen pixels
+      color: 0x1b998b, // Emerald
+      linewidth: 0.005, // Thick lines (relative to canvas)
     });
+    lineMaterial.resolution.set(mountRef.current.clientWidth, mountRef.current.clientHeight);
+    lineMaterial.depthWrite = false; // Prevent occluding black cube
 
-    // IMPORTANT: match canvas size
-    lineMaterial.resolution.set(
-      mountRef.current.clientWidth,
-      mountRef.current.clientHeight
-    );
+    const wireframeCube = new LineSegments2(lineGeometry, lineMaterial);
+    wireframeCube.renderOrder = 0;
+    scene.add(wireframeCube);
 
-    const cube = new LineSegments2(lineGeometry, lineMaterial);
-    scene.add(cube);
+    // Black cube (orbiting)
+    const pivot = new THREE.Object3D();
+    scene.add(pivot);
 
-    // Animate
+    const blackCubeGeometry = new THREE.BoxGeometry(2, 2, 2); // 2x2x2 cube
+    const blackCubeMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 }); // Pure black
+    blackCubeMaterial.depthTest = false; // Draw over wireframe
+    const blackCube = new THREE.Mesh(blackCubeGeometry, blackCubeMaterial);
+    blackCube.renderOrder = 1; // Draw after wireframe
+    blackCube.position.set(2.5, 0, 0); // Orbit radius of 2.5
+    pivot.add(blackCube);
+
+    // Animation loop
     const animate = () => {
-      frameRef.current = requestAnimationFrame(animate);
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
+      const frameId = requestAnimationFrame(animate);
+
+      // Rotate wireframe cube
+      wireframeCube.rotation.x += 0.01;
+      wireframeCube.rotation.y += 0.01;
+
+      // Orbit black cube
+      pivot.rotation.y += 0.02; // Horizontal orbit
+      blackCube.rotation.x += 0.03; // Black cube self-rotation
+      blackCube.rotation.y += 0.03;
+
       renderer.render(scene, camera);
+
+      // Store frame ID for cleanup
+      rendererRef.current!.frameId = frameId;
     };
     animate();
 
     // Handle resize
     const handleResize = () => {
       if (!mountRef.current || !rendererRef.current) return;
-      camera.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
+      const width = mountRef.current.clientWidth;
+      const height = mountRef.current.clientHeight;
+      camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      rendererRef.current.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
-
-      // update line thickness scaling
-      lineMaterial.resolution.set(
-        mountRef.current.clientWidth,
-        mountRef.current.clientHeight
-      );
+      renderer.setSize(width, height);
+      lineMaterial.resolution.set(width, height);
     };
     window.addEventListener('resize', handleResize);
 
+    // Cleanup
     return () => {
-      if (frameRef.current) cancelAnimationFrame(frameRef.current);
       window.removeEventListener('resize', handleResize);
+      if (rendererRef.current && rendererRef.current.frameId) {
+        cancelAnimationFrame(rendererRef.current.frameId);
+      }
       if (mountRef.current && rendererRef.current) {
         mountRef.current.removeChild(rendererRef.current.domElement);
         rendererRef.current.dispose();
       }
-      geometry.dispose();
-      edges.dispose();
+      boxGeometry.dispose();
+      edgesGeometry.dispose();
       lineGeometry.dispose();
       lineMaterial.dispose();
+      blackCubeGeometry.dispose();
+      blackCubeMaterial.dispose();
     };
   }, []);
 
   return (
-    <div className="relative w-full h-[384px] bg-white overflow-visible">
-      <div ref={mountRef} className="w-full h-full" />
-      <div className="absolute bottom-4 right-4 text-xs text-gray-500 font-mono">
+    <div
+      style={{
+        width: '100%',
+        height: '600px',
+        background: 'white',
+        position: 'relative',
+        overflow: 'visible',
+      }}
+    >
+      <div
+        ref={mountRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          border: '1px solid red', // Debug border
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '4px',
+          right: '4px',
+          fontSize: '12px',
+          color: '#6b7280',
+          fontFamily: 'monospace',
+        }}
+      >
         WebGL_STATUS: {webglStatus}
       </div>
     </div>
