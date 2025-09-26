@@ -42,13 +42,13 @@ const SpinningCube: React.FC = () => {
     mountRef.current.appendChild(renderer.domElement);
 
     // Cube edges geometry
-    const geometry = new THREE.BoxGeometry(5, 5, 5);
+    const geometry = new THREE.BoxGeometry(4, 4, 4);
     const edges = new THREE.EdgesGeometry(geometry);
 
     const lineGeometry = new LineSegmentsGeometry().fromEdgesGeometry(edges);
     const lineMaterial = new LineMaterial({
       color: 0x1B998B, // emerald green
-      linewidth: 5,    // thickness in screen pixels
+      linewidth: 4,    // thickness in screen pixels
     });
 
     // IMPORTANT: match canvas size
