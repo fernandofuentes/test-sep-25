@@ -16,3 +16,10 @@
     </div>
   </div>
 </div>
+
+<script>
+document.querySelectorAll('.js-change-background-color').forEach(btn => {
+  btn.addEventListener('mouseenter', () => btn.classList.add('hovering'));
+  btn.addEventListener('mouseleave', () => btn.classList.remove('hovering'));
+});
+</script>
