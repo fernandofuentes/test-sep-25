@@ -1,8 +1,10 @@
+---
+
 <section class="bg-brand-black py-24 sm:py-32">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
     <div class="mx-auto grid max-w-2xl grid-cols-1 lg:mx-0 lg:max-w-none lg:grid-cols-2">
       <div class="flex flex-col pb-10 sm:pb-16 lg:pr-8 lg:pb-0 xl:pr-20">
-        <img src="https://tailwindcss.com/plus-assets/img/logos/tuple-logo-white.svg" alt="" class="h-12 self-start not-dark:hidden" />
+        <img src={dunderMifflinLogo.src} alt="Dunder Mifflin" class="h-12 self-start not-dark:hidden" />
         <figure class="mt-10 flex flex-auto flex-col justify-between">
           <blockquote class="text-lg/8 text-gray-900 dark:text-gray-100">
             <p>"Unwritten Agency's strategies <span class="pop">penetrate deep</span> into the marketplace, <span class="pop">faster and harder</span> than any competitor I've seen. Their campaigns don't just spread awareness — they <span class="pop">dominate it</span>. If you want results that are <span class="pop">powerful, efficient, and unstoppable</span>… this is the team to trust."</p>
@@ -18,7 +20,7 @@
       </div>
       <div class="flex flex-col border-t border-gray-900/10 pt-10 sm:pt-16 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8 xl:pl-20 dark:border-white/10">
 
-        <img src="https://tailwindcss.com/plus-assets/img/logos/reform-logo-white.svg" alt="" class="h-12 self-start not-dark:hidden" />
+        <img src={dunderMifflinLogo.src} alt="Dunder Mifflin" class="h-12 self-start not-dark:hidden" />
         <figure class="mt-10 flex flex-auto flex-col justify-between">
           <blockquote class="text-lg/8 text-gray-900 dark:text-gray-100">
             <p class="shake">"THAT'S WHAT SHE SAID!"</p>
@@ -58,5 +60,5 @@
 
   .shake {
     animation: shake 0.5s ease-in-out infinite;
+import dunderMifflinLogo from '../assets/dunder-mifflin-logo.svg';
   }
-</style>
