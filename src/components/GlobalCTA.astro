@@ -4,22 +4,12 @@
       <h2 class="text-4xl font-semibold tracking-tight text-balance text-white sm:text-5xl">Boost your productivity. Start using our app today.</h2>
       <p class="mx-auto mt-6 max-w-xl text-lg/8 text-pretty text-white">Incididunt sint fugiat pariatur cupidatat consectetur sit cillum anim id veniam aliqua proident excepteur commodo do ea.</p>
       <div class="mt-10 flex items-center justify-center gap-x-6">
-<!-- Solid Maserati-style button -->
-<a href="/services" class="brand-button js-change-background-color">Get Started</a>
-
-
-<!-- Outline Maserati-style button -->
-<a href="/services" class="brand-button-outline js-change-background-color">Get Started</a>
-
-
+<!-- Link version (recommended for SEO if it navigates) -->
+<a href="/contact" class="brand-button-fill">
+  <span class="label">Get Started</span>
+  <span class="label label--overlay" aria-hidden="true">Get Started</span>
+</a>
       </div>
     </div>
   </div>
 </div>
-
-<script>
-document.querySelectorAll('.js-change-background-color').forEach(btn => {
-  btn.addEventListener('mouseenter', () => btn.classList.add('hovering'));
-  btn.addEventListener('mouseleave', () => btn.classList.remove('hovering'));
-});
-</script>
