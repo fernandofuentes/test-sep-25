@@ -28,7 +28,8 @@ const HomePageCyberComputer: React.FC = () => {
       0.1,
       2000
     );
-    camera.position.z = 10;
+    camera.position.set(0, 0, 10);
+    camera.lookAt(0, 0, 0); // ensure we're looking at the origin
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -37,7 +38,7 @@ const HomePageCyberComputer: React.FC = () => {
     rendererRef.current = renderer;
     mountRef.current.appendChild(renderer.domElement);
 
-    // Computer group
+    // ----- Main computer (simplified block) -----
     const computerGroup = new THREE.Group();
     const bodyGeometry = new THREE.BoxGeometry(2, 1.5, 1);
     const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0x1a1a1a, shininess: 100 });
@@ -46,7 +47,7 @@ const HomePageCyberComputer: React.FC = () => {
     computerGroup.add(computerBody);
     scene.add(computerGroup);
 
-    // Floating cyan cubes
+    // ----- Floating cyan cubes -----
     const cubes: THREE.Mesh[] = [];
     for (let i = 0; i < 5; i++) {
       const cubeGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
@@ -56,51 +57,55 @@ const HomePageCyberComputer: React.FC = () => {
       cubes.push(cube);
     }
 
-    // Black cube orbiting with pivot
+    // ----- Orbiting black cube (via pivot) -----
     const pivot = new THREE.Object3D();
     scene.add(pivot);
 
-    const orbitCubeGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-    const orbitCubeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+    const orbitCubeGeometry = new THREE.BoxGeometry(1.2, 1.2, 1.2); // bigger so it's obvious
+    const orbitCubeMaterial = new THREE.MeshPhongMaterial({
+      color: 0x000000,
+      emissive: 0x111111,        // self-lit so it remains visible
+      emissiveIntensity: 0.8,
+    });
     const orbitCube = new THREE.Mesh(orbitCubeGeometry, orbitCubeMaterial);
     orbitCube.castShadow = true;
     pivot.add(orbitCube);
 
-    const ORBIT_RADIUS = 4;
+    const ORBIT_RADIUS = 3;      // closer to the center so it’s in frame
     orbitCube.position.set(ORBIT_RADIUS, 0, 0);
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+    // ----- Lights -----
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0x00ff88, 1.2, 100);
-    pointLight.position.set(5, 5, 5);
-    pointLight.castShadow = true;
-    scene.add(pointLight);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    keyLight.position.set(5, 5, 7);
+    keyLight.castShadow = true;
+    scene.add(keyLight);
 
-    // Animate
+    // ----- Animate -----
     const animate = () => {
       frameRef.current = requestAnimationFrame(animate);
 
       // Spin computer
       computerGroup.rotation.y += 0.005;
 
-      // Animate cyan cubes
+      // Floaters
+      const t = performance.now() * 0.001;
       cubes.forEach((cube, index) => {
-        const time = performance.now() * 0.001;
-        const angle = (index / 5) * Math.PI * 2 + time * 0.5;
+        const angle = (index / 5) * Math.PI * 2 + t * 0.5;
         cube.position.set(
           Math.cos(angle) * 8,
-          Math.sin(angle * 0.5 + time) * 3,
+          Math.sin(angle * 0.5 + t) * 3,
           Math.sin(angle) * 8
         );
         cube.rotation.x += 0.02;
         cube.rotation.y += 0.02;
       });
 
-      // Orbit the black cube (pivot)
-      pivot.rotation.y += 0.02;
-      pivot.rotation.x = Math.sin(performance.now() * 0.001) * 0.15;
+      // Orbiting cube
+      pivot.rotation.y += 0.02;                          // horizontal orbit
+      pivot.rotation.x = Math.sin(t * 0.8) * 0.15;       // slight vertical wobble
       orbitCube.rotation.x += 0.03;
       orbitCube.rotation.y += 0.03;
 
@@ -108,7 +113,7 @@ const HomePageCyberComputer: React.FC = () => {
     };
     animate();
 
-    // Resize
+    // ----- Resize -----
     const handleResize = () => {
       if (!mountRef.current || !rendererRef.current) return;
       camera.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
@@ -117,7 +122,7 @@ const HomePageCyberComputer: React.FC = () => {
     };
     window.addEventListener('resize', handleResize);
 
-    // Cleanup
+    // ----- Cleanup -----
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
       window.removeEventListener('resize', handleResize);
