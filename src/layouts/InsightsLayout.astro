@@ -1,0 +1,31 @@
+---
+import '@tailwindplus/elements';
+import "../styles/global.css";
+import GlobalCTA from '../components/GlobalCTA.astro'
+import GlobalFooter from '../components/GlobalFooter.astro'
+---
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Insights & Blog - Unwritten Agency | Digital Marketing Tips</title>
+		<meta name="description" content="Get the latest digital marketing insights, SEO tips, and industry trends from Unwritten Agency's expert team in The Woodlands, Texas." />
+	</head>
+	<body>
+		<slot />
+		<GlobalCTA />
+		<GlobalFooter />
+	</body>
+</html>
+
+<style>
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+	}
+</style>

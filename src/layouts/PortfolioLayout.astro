@@ -1,0 +1,31 @@
+---
+import '@tailwindplus/elements';
+import "../styles/global.css";
+import GlobalCTA from '../components/GlobalCTA.astro'
+import GlobalFooter from '../components/GlobalFooter.astro'
+---
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Our Work - Unwritten Agency | Portfolio & Case Studies</title>
+		<meta name="description" content="Explore Unwritten Agency's portfolio of successful digital marketing campaigns, website designs, and creative projects for clients in Houston and beyond." />
+	</head>
+	<body>
+		<slot />
+		<GlobalCTA />
+		<GlobalFooter />
+	</body>
+</html>
+
+<style>
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+	}
+</style>
