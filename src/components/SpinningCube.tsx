@@ -46,7 +46,7 @@ const SpinningCube: React.FC = () => {
 
     const lineMat = new LineMaterial({
       color: 0x1B998B,   // Unwritten emerald
-      linewidth: 7,      // thickness in screen pixels
+      linewidth: 4,      // thickness in screen pixels
     });
     // Important: resolution must match canvas size
     lineMat.resolution.set(mountRef.current.clientWidth, mountRef.current.clientHeight);
