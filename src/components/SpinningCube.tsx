@@ -46,7 +46,7 @@ const SpinningCube: React.FC = () => {
 
     const lineMat = new LineMaterial({
       color: 0x1B998B,   // Unwritten emerald
-      linewidth: 4,      // thickness in screen pixels
+      linewidth: 7,      // thickness in screen pixels
     });
     // Important: resolution must match canvas size
     lineMat.resolution.set(mountRef.current.clientWidth, mountRef.current.clientHeight);
@@ -137,6 +137,15 @@ const SpinningCube: React.FC = () => {
       scene.remove(pivot);
     };
   }, []);
+
+  return (
+    <div className="relative w-full h-[600px] bg-white overflow-visible">
+      <div ref={mountRef} className="w-full h-full" />
+      <div className="absolute bottom-4 right-4 text-xs text-gray-500 font-mono">
+        WebGL_STATUS: {webglStatus}
+      </div>
+    </div>
+  );
 };
 
 export default SpinningCube;
