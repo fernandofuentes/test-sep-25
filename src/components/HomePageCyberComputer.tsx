@@ -10,6 +10,12 @@ const HomePageCyberComputer: React.FC = () => {
   useEffect(() => {
     if (!mountRef.current) return;
 
+    // Check WebGL support
+    if (!window.WebGLRenderingContext) {
+      console.error('WebGL not supported');
+      return;
+    }
+
     // Scene setup
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a0a);
@@ -25,11 +31,23 @@ const HomePageCyberComputer: React.FC = () => {
     camera.position.z = 5;
 
     // Renderer setup
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance"
+    });
     renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     rendererRef.current = renderer;
-    mountRef.current.appendChild(renderer.domElement);
+    
+    try {
+      mountRef.current.appendChild(renderer.domElement);
+    } catch (error) {
+      console.error('Failed to append renderer:', error);
+      return;
+    }
 
     // Create cyber computer geometry
     const computerGroup = new THREE.Group();
@@ -41,6 +59,8 @@ const HomePageCyberComputer: React.FC = () => {
       shininess: 100 
     });
     const computerBody = new THREE.Mesh(bodyGeometry, bodyMaterial);
+    computerBody.castShadow = true;
+    computerBody.receiveShadow = true;
     computerGroup.add(computerBody);
 
     // Screen
@@ -71,6 +91,8 @@ const HomePageCyberComputer: React.FC = () => {
     const keyboard = new THREE.Mesh(keyboardGeometry, keyboardMaterial);
     keyboard.position.y = -1;
     keyboard.position.z = 1.2;
+    keyboard.castShadow = true;
+    keyboard.receiveShadow = true;
     computerGroup.add(keyboard);
 
     // Add some cyber elements - floating cubes
@@ -101,6 +123,7 @@ const HomePageCyberComputer: React.FC = () => {
 
     const pointLight = new THREE.PointLight(0x00ff88, 1, 100);
     pointLight.position.set(0, 2, 3);
+    pointLight.castShadow = true;
     scene.add(pointLight);
 
     const backLight = new THREE.PointLight(0x0088ff, 0.5, 100);
@@ -127,10 +150,17 @@ const HomePageCyberComputer: React.FC = () => {
         screenGlow.material.opacity = 0.1 + Math.sin(Date.now() * 0.003) * 0.1;
       }
 
-      renderer.render(scene, camera);
+      try {
+        renderer.render(scene, camera);
+      } catch (error) {
+        console.error('Render error:', error);
+      }
     };
 
-    animate();
+    // Start animation with a small delay
+    setTimeout(() => {
+      animate();
+    }, 100);
 
     // Handle resize
     const handleResize = () => {
@@ -150,7 +180,7 @@ const HomePageCyberComputer: React.FC = () => {
       }
       window.removeEventListener('resize', handleResize);
       
-      if (mountRef.current && rendererRef.current) {
+      if (mountRef.current && rendererRef.current && mountRef.current.contains(rendererRef.current.domElement)) {
         mountRef.current.removeChild(rendererRef.current.domElement);
       }
       
@@ -173,12 +203,15 @@ const HomePageCyberComputer: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full h-96 bg-gradient-to-b from-gray-900 to-black rounded-lg overflow-hidden">
-      <div ref={mountRef} className="w-full h-full" />
+    <div className="relative w-full h-96 bg-gradient-to-b from-gray-900 to-black rounded-lg overflow-hidden">
+      <div ref={mountRef} className="w-full h-full" style={{ minHeight: '384px' }} />
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-4 left-4 text-brand-emerald font-mono text-sm">
           <div className="animate-pulse">SYSTEM_ONLINE</div>
           <div className="text-xs text-gray-400 mt-1">CYBER_COMPUTER_V2.1</div>
+        </div>
+        <div className="absolute bottom-4 right-4 text-xs text-gray-500 font-mono">
+          <div>WebGL_STATUS: {typeof window !== 'undefined' && window.WebGLRenderingContext ? 'ACTIVE' : 'ERROR'}</div>
         </div>
       </div>
     </div>
