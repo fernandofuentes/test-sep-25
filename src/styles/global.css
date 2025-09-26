@@ -14,3 +14,22 @@
   --font-brand: "Veneer", "Poppins", sans-serif;
   --font-sans: "Poppins", system-ui, sans-serif; /* fallback for body text */
 }
+
+/* === Custom Components === */
+@layer components {
+  .brand-button {
+    @apply rounded-md bg-brand-emerald px-5 py-3 text-sm font-semibold text-brand-white shadow 
+           hover:bg-brand-emerald-dark focus-visible:outline-2 focus-visible:outline-offset-2 
+           focus-visible:outline-brand-emerald;
+  }
+
+  .brand-button-outline {
+    @apply rounded-md border border-brand-emerald px-5 py-3 text-sm font-semibold text-brand-emerald 
+           hover:bg-brand-emerald hover:text-brand-white;
+  }
+
+  .brand-button-light {
+    @apply rounded-md bg-brand-lightgray px-5 py-3 text-sm font-semibold text-brand-black 
+           hover:bg-brand-emerald hover:text-brand-white;
+  }
+}
