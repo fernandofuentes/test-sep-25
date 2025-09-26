@@ -18,42 +18,16 @@
 
 /* === Custom Components === */
 @layer components {
-  /* Solid Black Button → White text. Inverts on hover. */
   .brand-button {
-    @apply rounded-md bg-brand-black px-5 py-3 text-sm font-semibold text-brand-white shadow 
-           hover:bg-brand-white hover:text-brand-black 
-           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-black
-           transition-colors duration-300;
+    @apply inline-block rounded-md bg-brand-black px-6 py-3 text-sm font-semibold text-brand-white
+           transition-colors duration-300 ease-in-out
+           hover:bg-brand-white hover:text-brand-black;
   }
 
-  /* Outline Button → Black border + text. Fills on hover. */
   .brand-button-outline {
-    @apply rounded-md border border-brand-black px-5 py-3 text-sm font-semibold text-brand-black 
-           hover:bg-brand-black hover:text-brand-white 
-           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-black
-           transition-colors duration-300;
-  }
-
-  /* Optional Light Gray Button (alt style) */
-  .brand-button-light {
-    @apply rounded-md bg-brand-lightgray px-5 py-3 text-sm font-semibold text-brand-black 
-           hover:bg-brand-emerald hover:text-brand-white 
-           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-emerald
-           transition-colors duration-300;
-  }
-
-  /* src/styles/global.css */
-  /* Maserati-Style Solid Button (yellow → black/white swap on hover) */
-  .maserati-button {
-    @apply inline-block rounded-md bg-yellow-400 px-6 py-3 text-sm font-semibold text-brand-black 
-           transition-all duration-300 ease-in-out 
-           hover:bg-brand-black hover:text-yellow-400;
-  }
-
-  /* Maserati-Style Outline Button (border → fill on hover) */
-  .maserati-button-outline {
-    @apply inline-block rounded-md border border-yellow-400 px-6 py-3 text-sm font-semibold text-yellow-400
-           transition-all duration-300 ease-in-out
-           hover:bg-yellow-400 hover:text-brand-black;
+    @apply inline-block rounded-md border border-brand-black px-6 py-3 text-sm font-semibold text-brand-black
+           transition-colors duration-300 ease-in-out
+           hover:bg-brand-black hover:text-brand-white;
   }
 }
+
