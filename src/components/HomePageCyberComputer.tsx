@@ -10,7 +10,6 @@ const SpinningCube: React.FC = () => {
   useEffect(() => {
     if (!mountRef.current) return;
 
-    // Check WebGL support
     if (!window.WebGLRenderingContext) {
       console.error('WebGL not supported');
       setWebglStatus('ERROR');
@@ -21,7 +20,7 @@ const SpinningCube: React.FC = () => {
 
     // Scene setup
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xffffff); // white background
+    scene.background = new THREE.Color(0xffffff); // white background ✅
 
     // Camera
     const camera = new THREE.PerspectiveCamera(
@@ -41,7 +40,7 @@ const SpinningCube: React.FC = () => {
 
     // Cube
     const geometry = new THREE.BoxGeometry(2, 2, 2);
-    const material = new THREE.MeshNormalMaterial(); // fun colored surface
+    const material = new THREE.MeshNormalMaterial();
     const cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
 
@@ -54,7 +53,7 @@ const SpinningCube: React.FC = () => {
     };
     animate();
 
-    // Handle resize
+    // Resize
     const handleResize = () => {
       if (!mountRef.current || !rendererRef.current) return;
       camera.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
@@ -63,7 +62,6 @@ const SpinningCube: React.FC = () => {
     };
     window.addEventListener('resize', handleResize);
 
-    // Cleanup
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
       window.removeEventListener('resize', handleResize);
@@ -77,7 +75,7 @@ const SpinningCube: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-96 bg-white rounded-lg overflow-hidden">
+    <div className="relative w-full h-96 bg-white overflow-hidden">
       <div ref={mountRef} className="w-full h-full" />
       <div className="absolute bottom-4 right-4 text-xs text-gray-500 font-mono">
         WebGL_STATUS: {webglStatus}
