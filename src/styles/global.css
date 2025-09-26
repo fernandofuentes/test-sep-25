@@ -15,7 +15,7 @@
   --font-sans: "Poppins", system-ui, sans-serif; /* fallback for body text */
 }
 
-/* === Custom Components === */
+/* === Custom Button Components === */
 @layer components {
   .brand-button {
     @apply rounded-md bg-brand-emerald px-5 py-3 text-sm font-semibold text-brand-white shadow 
